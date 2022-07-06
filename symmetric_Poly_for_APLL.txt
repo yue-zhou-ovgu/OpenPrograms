@@ -1,0 +1,41 @@
+//////////////////////////////////////////////////////
+//
+//	This is a MAGMA program for a symmetric polynomial 
+//  method to exclude n for which no almost perfect linear 
+//  Lee code exists, n in [1, N]
+//
+///////////////////////////////////////////////////////
+N := 100;
+seq_exc := [];
+for n in [1..N] do
+	expG := 2*(n^2+n+1);
+	for v in PrimeDivisors(expG) do
+		//print "testing v=", v;
+		if v le (2*n+1) then
+			continue;
+		end if;
+		m := expG div v;
+		l := (m-1) div 4;
+		
+		Fv := GF(v);
+		a := Log(Fv! 4, Fv! -(4*n+2));
+		if a eq 0 then
+			a := Order(4,v);
+		end if;
+		
+		b := Order(4,v);
+		if a ne -1 then
+			for x in [0..n div a] do
+				for y in [0..n div b] do
+					if (a*(x+1) + b*y) in [n-i: i in [0..l]] then
+						continue v;
+					end if;
+				end for;
+			end for;
+		end if;
+		
+		Append(~seq_exc, n);
+		continue n;
+	end for;
+end for;
+seq_exc;
